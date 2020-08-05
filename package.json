@@ -18,8 +18,8 @@
   },
   "homepage": "https://github.com/nmichel123/MYSQLEmployeeTracker#readme",
   "dependencies": {
-    "inquirer":"^7.3.3",
-    "mysql":"^2.18.1",
-    "console.table":"^0.10.0"
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1",
+    "console.table": "^0.10.0"
   }
 }

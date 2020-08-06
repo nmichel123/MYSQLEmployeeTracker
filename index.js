@@ -49,6 +49,8 @@ function displayOptions() {
       });
   }
 
+  // Code for "Add departments, roles, employees"
+
   function addInfo() {
     inquirer
       .prompt([
@@ -183,3 +185,18 @@ function displayOptions() {
             )
         });
     }
+
+    // Code for "View departments, roles, employees"
+
+    function viewInfo() {
+        // query the database for all items being auctioned
+        connection.query("SELECT * FROM department", function(err, results) {
+          if (err) throw err});
+        
+        connection.query("SELECT * FROM emp_role", function(err, results) {
+         if (err) throw err});
+
+        connection.query("SELECT * FROM employee", function(err, results) {
+            if (err) throw err});
+        }
+

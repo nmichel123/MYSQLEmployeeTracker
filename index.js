@@ -39,7 +39,7 @@ function displayOptions() {
           break;
   
         case "View departments, roles, employees":
-          viewInfo();
+          viewWhich();
           break;
   
         case "Update employee roles":
@@ -188,15 +188,55 @@ function displayOptions() {
 
     // Code for "View departments, roles, employees"
 
-    function viewInfo() {
+    function viewWhich() {
+        inquirer
+          .prompt({
+            name: "whichView",
+            type: "list",
+            message: "Which table would you like to view?",
+            choices: [
+              "Departments",
+              "Roles",
+              "Employees",
+            ]
+          })
+          .then(function(answer) {
+            switch (answer.whichView) {
+            case "Departments":
+              viewDep();
+              break;
+      
+            case "Roles":
+              viewRole();
+              break;
+      
+            case "Employees":
+              viewEmp();
+              break;
+            }
+          });
+      }
+    
+    function viewDep() {
         // query the database for all items being auctioned
         connection.query("SELECT * FROM department", function(err, results) {
-          if (err) throw err});
-        
-        connection.query("SELECT * FROM emp_role", function(err, results) {
-         if (err) throw err});
+            console.log(results);
+            displayOptions();
+          if (err) throw err})};
 
-        connection.query("SELECT * FROM employee", function(err, results) {
-            if (err) throw err});
-        }
+    function viewRole() {
+    connection.query("SELECT * FROM emp_role", function(err, results) {
+            console.log(results);
+            displayOptions();
+         if (err) throw err})};
+
+    function viewEmp() {
+    connection.query("SELECT * FROM employee", function(err, results) {
+            console.log(results);
+            displayOptions();
+            if (err) throw err})};
+
+// Code for updating departments, roles, employees 
+
+
 

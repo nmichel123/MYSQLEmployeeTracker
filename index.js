@@ -4,13 +4,13 @@ var inquirer = require("inquirer");
 var connection = mysql.createConnection({
     host: "localhost",
   
-    // Your port; if not 3306
+  
     port: 3306,
   
-    // Your username
+ 
     user: "root",
   
-    // Your password
+    
     password: "sanctioned",
     database: "mysqlemployeetracker"
   });
@@ -50,7 +50,6 @@ function displayOptions() {
   }
 
   function addInfo() {
-    // prompt for info about the item being put up for auction
     inquirer
       .prompt([
         {
@@ -97,36 +96,90 @@ function displayOptions() {
                 },
                 function(err) {
                     if (err) throw err;
-                    console.log("Your department was created successfully!");
-                    // re-prompt the user for if they want to bid or post
+                    console.log("Your new department was created successfully!");
+                    
                     displayOptions();
                 }
             )
         });
     }
 
-    function addDep () {
+    function addRole () {
         inquirer
         .prompt([
         {
-            name: "depName" ,
+            name: "title" ,
             type: "input" ,
-            message: "What is the name of the new department?" ,
+            message: "What is the new role's title?" ,
+        },
+        {
+            name: "salary" ,
+            type: "input" ,
+            message: "What is the salary of the new role?" ,
+        },
+        {
+            name: "depId" ,
+            type: "input" ,
+            message: "What is the department ID of the new role?" ,
         },
         ])
         .then(function(answer){
             connection.query(
-                "INSERT INTO department SET ?",
+                "INSERT INTO emp_role SET ?",
                 {
-                    dep_name: answer.depName
+                    title: answer.title,
+                    salary: answer.salary || 0, 
+                    department_id: answer.depId
                 },
                 function(err) {
                     if (err) throw err;
-                    console.log("Your department was created successfully!");
-                    // re-prompt the user for if they want to bid or post
+                    console.log("Your new role was created successfully!");
+                   
                     displayOptions();
                 }
             )
         });
     }
-  
+
+    function addEmp () {
+        inquirer
+        .prompt([
+        {
+            name: "firstName" ,
+            type: "input" ,
+            message: "What is the new employee's first name?" ,
+        },
+        {
+            name: "lastName" ,
+            type: "input" ,
+            message: "What is the new employee's last name?" ,
+        },
+        {
+            name: "roleId" ,
+            type: "input" ,
+            message: "What is the role ID of the new employee?" ,
+        },
+        {
+            name: "managerId" ,
+            type: "input" ,
+            message: "What is the manager ID of the new employee?" ,
+        },
+        ])
+        .then(function(answer){
+            connection.query(
+                "INSERT INTO employee SET ?",
+                {
+                    first_name: answer.firstName,
+                    last_name: answer.lastName, 
+                    role_id: answer.roleId || 0,
+                    manager_id: answer.managerId || 0,
+                },
+                function(err) {
+                    if (err) throw err;
+                    console.log("Your new employee was created successfully!");
+                    
+                    displayOptions();
+                }
+            )
+        });
+    }

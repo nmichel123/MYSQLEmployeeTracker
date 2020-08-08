@@ -27,23 +27,23 @@ function displayOptions() {
         type: "list",
         message: "What would you like to do?",
         choices: [
-          "Add departments, roles, employees",
-          "View departments, roles, employees",
-          "Update employee roles",
+          "Add departments, roles & employees",
+          "View departments, roles & employees",
+          "Update departments, roles & employees",
         ]
       })
       .then(function(answer) {
         switch (answer.action) {
-        case "Add departments, roles, employees":
+        case "Add departments, roles & employees":
           addInfo();
           break;
   
-        case "View departments, roles, employees":
+        case "View departments, roles & employees":
           viewWhich();
           break;
   
-        case "Update employee roles":
-          updateRoles();
+        case "Update departments, roles & employees":
+          updateTables();
           break;
         }
       });
@@ -51,7 +51,7 @@ function displayOptions() {
 
   // Code for "Add departments, roles, employees"
 
-  function addInfo() {
+function addInfo() {
     inquirer
       .prompt([
         {
@@ -81,7 +81,7 @@ function displayOptions() {
       });
     }
 
-    function addDep () {
+function addDep () {
         inquirer
         .prompt([
         {
@@ -106,7 +106,7 @@ function displayOptions() {
         });
     }
 
-    function addRole () {
+function addRole () {
         inquirer
         .prompt([
         {
@@ -143,7 +143,7 @@ function displayOptions() {
         });
     }
 
-    function addEmp () {
+function addEmp () {
         inquirer
         .prompt([
         {
@@ -188,7 +188,7 @@ function displayOptions() {
 
     // Code for "View departments, roles, employees"
 
-    function viewWhich() {
+function viewWhich() {
         inquirer
           .prompt({
             name: "whichView",
@@ -217,26 +217,170 @@ function displayOptions() {
           });
       }
     
-    function viewDep() {
-        // query the database for all items being auctioned
-        connection.query("SELECT * FROM department", function(err, results) {
+  function viewDep() {
+    connection.query("SELECT * FROM department", function(err, results) {
             console.log(results);
             displayOptions();
           if (err) throw err})};
 
-    function viewRole() {
+  function viewRole() {
     connection.query("SELECT * FROM emp_role", function(err, results) {
             console.log(results);
             displayOptions();
          if (err) throw err})};
 
-    function viewEmp() {
+  function viewEmp() {
     connection.query("SELECT * FROM employee", function(err, results) {
             console.log(results);
             displayOptions();
             if (err) throw err})};
 
-// Code for updating departments, roles, employees 
+    // Code for updating departments, roles, employees 
 
+function updateTables() {
+        inquirer
+          .prompt({
+            name: "updateWhich",
+            type: "list",
+            message: "Which table would you like to update?",
+            choices: [
+              "Departments",
+              "Roles",
+              "Employees",
+            ]
+          })
+          .then(function(answer) {
+            switch (answer.updateWhich) {
+            case "Departments":
+              updateDep();
+              break;
+      
+            case "Roles":
+              updateRoles();
+              break;
+      
+            case "Employee":
+              updateEmp();
+              break;
+            }
+          });
+      }
 
+      function updateDep() {
+        connection.query("SELECT * FROM department", function(err, results) {
+          if (err) throw err;
+          inquirer
+            .prompt([
+              {
+                name: "pickDep",
+                type: "list",
+                choices: function() {
+                  var choiceArray = [];
+                  for (var i = 0; i < results.length; i++) {
+                    choiceArray.push(results[i].dep_name);
+                  }
+                  return choiceArray;
+                },
+                message: "Which department would you like to edit?"
+              },
+              {
+                name: "updatedDep",
+                type: "input",
+                message: "Type in new department name"
+              }
+            ])
+            .then (function(answer){
+              var chosenDep;
+              for (var i = 0; i < results.length; i++) {
+                if (results[i].dep_name === answer.pickDep) {
+                  chosenDep = results[i];
+                }
+              }
+            connection.query(
+            "UPDATE department SET ? WHERE ?",
+            [
+              {
+                dep_name: answer.updatedDep
+              },
+              {
+                id: chosenDep.id
+              }
+            ],
+            function(error) {
+              if (error) throw error;
+              console.log("Field updated!");
+              displayOptions();
+            }
+          );
+        })
+        });
+      }
 
+      function updateRoles() {
+        connection.query("SELECT * FROM emp_role", function(err, results) {
+          if (err) throw err;
+          inquirer
+            .prompt([
+              {
+                name: "pickRole",
+                type: "list",
+                choices: function() {
+                  var choiceArray = [];
+                  for (var i = 0; i < results.length; i++) {
+                    choiceArray.push(results[i].title);
+                  }
+                  return choiceArray;
+                },
+                message: "Which role would you like to edit?"
+              },
+              {
+                name: "updatedRole",
+                type: "input",
+                message: "Type in new title of role:"
+              },
+              {
+                name: "updatedSalary",
+                type: "input",
+                message: "Type in new salary of role (Number):"
+              },
+              {
+                name: "updatedDepId",
+                type: "input",
+                message: "Type in new department ID of role:"
+              }
+            ])
+            .then (function(answer){
+              var chosenRole;
+              for (var i = 0; i < results.length; i++) {
+                if (results[i].title === answer.pickRole) {
+                  chosenRole = results[i];
+                }
+              }
+              var chosenSalary;
+              for (var i = 0; i < results.length; i++) {
+                if (results[i].salary === answer.pickRole) {
+                  chosenSalary = results[i];
+                }
+              }
+            connection.query(
+            "UPDATE emp_role SET ? WHERE ?",
+            [
+              {
+                title: answer.updatedRole
+              },
+              {
+                id: chosenRole.id
+              },
+              {
+                salary: chosenRole.updatedSalary
+              }
+            ],
+            function(error) {
+              if (error) throw error;
+              console.log("Fields updated!");
+              displayOptions();
+            }
+          );
+        })
+        });
+      }

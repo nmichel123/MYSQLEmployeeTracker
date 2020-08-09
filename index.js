@@ -355,11 +355,8 @@ function updateTables() {
                 if (results[i].title === answer.pickRole) {
                   chosenRole = results[i];
                 }
-              }
-              var chosenSalary;
-              for (var i = 0; i < results.length; i++) {
-                if (results[i].salary === answer.pickRole) {
-                  chosenSalary = results[i];
+                else if (results[i].salary === answer.pickRole) {
+                  chosenRole = results[i];
                 }
               }
             connection.query(
@@ -372,7 +369,10 @@ function updateTables() {
                 id: chosenRole.id
               },
               {
-                salary: chosenRole.updatedSalary
+                salary: answer.updatedSalary
+              },
+              {
+                department_id: answer.updatedDepId
               }
             ],
             function(error) {
